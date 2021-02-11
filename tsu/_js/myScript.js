@@ -1,29 +1,62 @@
-// Test code
-// Var or let also work. Let means it will change, const means it stays constant. 
+// Let: initialize numbers, names, many things
 
-// let myNum = 6;
-// const myName = "Tyler";
-// alert(myNum);
-// alert(myName);
-// myNum = 2003;
-// alert(myNum);
+let player;
+let mouseCoords = [];
 
-// alert("hello world");
-// add a canvas to the page
+// gets mouse position when clicked
+addEventListener('mousedown', mouseClick);
 
-// const canvas = document.getElementById('canvas');
-// const ctx = canvas.getContext('2d');
+function mouseClick(e) {
+  console.log(`
+    Screen X/Y: ${e.screenX}, ${e.screenY}
+	Client X/Y: ${e.clientX}, ${e.clientY}`);
+  mouseCoords = [e.clientX, e.clientY];
+  if (drawCircle.x > mouseCoords[0] && drawCircle.x + drawCircle.w < mouseCoords){
+    console.log("inside")
+  }
+  // console.log(mouseCoords[0]);
+}
 
-// ctx.fillStyle = 'green';
-// ctx.fillRect(10, 10, 150, 100);
 
-// let myName = 'Tyler';
+//initializing variables to create a canvas 
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
 
-// myName = 'John Cena';
+//set choices
+let choices = ["rock", "paper", "scissors"];
 
-// if (myName == 'Jim'){
-//   console.log("Hello Jim");
-// }
+function randChoice(x) {
+  return Math.floor(Math.random() * x);
+}
+
+let cpuChoice = randChoice(choices.length);
+
+console.log(choices[cpuChoice]);
+
+if (cpuChoice == 0) {
+  drawCircle();
+}
+
+if (cpuChoice == 1) {
+  drawSquare();
+}
+
+if (cpuChoice == 2) {
+  drawTriangle1();
+  drawTriangle2();
+}
+
+function RPS() {
+  if (player == "scissors" && cpu == "paper") {
+    drawTriangle();
+  } else if (player == "rock" && cpu == "scissors") {
+    drawCircle();
+  }
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
 
 // Init a function to draw a triangle on the canvas
 function drawTriangle1() {
@@ -76,12 +109,4 @@ function drawCircle() {
     ctx.strokeStyle = '#FF0000';
     ctx.stroke();
   }
-}
-
-// Puts the shapes on the canvas
-function main() {
-  drawTriangle1();
-  drawTriangle2();
-  drawSquare();
-  drawCircle();
 }
