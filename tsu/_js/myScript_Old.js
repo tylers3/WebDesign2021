@@ -10,7 +10,7 @@ function mouseClick(e) {
     Screen X/Y: ${e.screenX}, ${e.screenY}
 	Client X/Y: ${e.clientX}, ${e.clientY}`);
   mouseCoords = [e.clientX, e.clientY];
-  getRandomInt 
+  getRandomInt
   console.log(mouseCoords);
   player = mouseCoords[0];
 }
