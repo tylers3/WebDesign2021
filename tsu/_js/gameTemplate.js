@@ -16,12 +16,12 @@ let mouseY = 0;
 
 // let mouseClickX = 0
 // Object
-let mouseClickX = {
+let mousePos = {
   x: 0,
   y: 0
 };
 
-let mouseClickY = {
+let mouseClicks = {
   x: 0,
   y: 0
 };
@@ -62,6 +62,7 @@ let oSquare = {
   h: 50,
   x: 150,
   y: 200,
+  // Direction
   vx: 0.1,
   vy: 0.1,
   color: 'black'
@@ -78,14 +79,15 @@ function fSquare(w, h, x, y, c, vx, vy) {
   this.vy = vy;
   this.color = c;
   this.draw = function () {
-      ctx.fillStyle = this.color;
-      ctx.fillRect(this.x, this.y, this.w, this.h);
-      ctx.strokeRect(this.x, this.y, this.w, this.h);
-    };
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.w, this.h);
+    ctx.strokeRect(this.x, this.y, this.w, this.h);
+  };
 }
 
 // create a JS Class that allow you to create more objects from a 'template' using 'new'
-class cSquare {
+// Classes need to be capitolized. 
+class Csquare {
   constructor(w, h, x, y) {
     this.w = w;
     this.h = h;
@@ -94,6 +96,9 @@ class cSquare {
     this.vx = 0;
     this.vy = 0;
     this.color = 'black';
+  }
+  update(){
+
   }
   draw() {
     ctx.fillStyle = this.color;
@@ -109,10 +114,11 @@ let newSquare = Object.create(oSquare);
 let oneSquare = new fSquare(25, 25, 0, 0, 0, 0, 'red');
 let twoSquare = new fSquare(25, 25, 150, 25, 0, 0, 'green');
 let threeSquare = new fSquare(25, 25, 0, 0, 0, 0, 'blue');
+let fourSquare = new fSquare(25, 25, 0, 0, 0, 0, 'blue');
 
 
-// create instance of class cSquare
-let anotherSquare = new cSquare(40, 40, 25, 25);
+// create instance of class Csquare
+let anotherSquare = new Csquare(40, 40, 25, 25);
 
 let myCircle = {
   r: 25,
@@ -209,9 +215,9 @@ function drawText(color, font, align, base, text, x, y) {
 // draws a square from mySquare under function draw(), and updates it. 
 // draws the text for updating variables.
 function drawSquare() {
-  ctx.fillStyle = mySquare.color;
-  ctx.fillRect(mySquare.x, mySquare.y, mySquare.w, mySquare.h);
-  ctx.strokeRect(mySquare.x, mySquare.y, mySquare.w, mySquare.h);
+  ctx.fillStyle = oSquare.color;
+  ctx.fillRect(oSquare.x, oSquare.y, oSquare.w, oSquare.h);
+  ctx.strokeRect(oSquare.x, oSquare.y, oSquare.w, oSquare.h);
 }
 
 // draws all the stuff on the canvas that you want to draw
@@ -223,8 +229,10 @@ function draw() {
   drawText('black', "24px Helvetica", "left", "top", "mouseclick: " + mouseClickX + " " + mouseClickY, 0, 32);
   drawSquare();
   oneSquare.draw();
-  anotherSquare.draw();
+  twoSquare.draw();
+  threeSquare.draw();
   myCircle.draw();
+  fourSquare.draw();
 }
 
 // set variables necessary for game loop
