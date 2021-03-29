@@ -7,6 +7,7 @@ let HEIGHT = 768;
 let GRAVITY = 9.8;
 let SCORE = 0;
 let paused = false;
+let timerThen = Math.floor(Date.now() / 1000);
 
 //walls
 let walls = [];
@@ -14,6 +15,7 @@ let walls = [];
 //array for mobs/enemies
 let mobs1 = [];
 let mobs2 = [];
+let mobs3 = [];
 
 // lets us know if game is initialized
 let initialized = false;
@@ -44,6 +46,8 @@ function mouseCollide(obj) {
     obj.y <= mouseClickY
   ) {
     return true;
+    // *************Check this*************
+    this.spliced = true;
   }
 }
 
@@ -66,6 +70,40 @@ function init() {
   document.getElementById("chuck").style.height = canvas.height + 'px';
   ctx = canvas.getContext('2d');
   initialized = true;
+}
+
+function countUp(end) {
+  timerNow = Math.floor(Date.now() / 1000);
+  currentTimer = timerNow - timerThen;
+  if (currentTimer >= end) {
+    if (mobs2.length < 10) {
+      spawnMob(20, mobs2);
+    }
+    return end;
+  }
+  return currentTimer;
+}
+
+function counter() {
+  timerNow = Math.floor(Date.now() / 1000);
+  currentTimer = timerNow - timerThen;
+  return currentTimer;
+}
+
+function timerDown() {
+  this.time = function (x, y) {
+    // this.timerThen = Math.floor(Date.now() / 1000);
+    // this.timerNow = Math.floor(Date.now() / 1000);
+    this.timerThen = timerThen;
+    this.timerNow = Math.floor(Date.now() / 1000);
+    this.tick = this.timerNow - this.timerThen;
+    if (this.tick <= y && typeof (this.tick + x) != "undefined") {
+      return y - this.tick;
+    } else {
+      this.timerThen = this.timerNow;
+      return x;
+    }
+  };
 }
 
 //************************ ALL GAME CLASSES *********
@@ -148,7 +186,7 @@ addEventListener('mousedown', function (e) {
   };
 });
 
-addEventListener('mouseup', e=> {
+addEventListener('mouseup', e => {
   mouseClickX = null;
   mouseClickY = null;
 })
@@ -170,17 +208,19 @@ function update() {
     if (mouseClickX && mouseClickY == this.x && this.y) {
       SCORE++;
       m.spliced = true;
+      console.log("Spliced")
+    }
+  }
+  for (let m of mobs1) {
+    m.update();
+    if (player.collide(m)) {
+      m.spliced = true;
     }
   }
   for (let m of mobs2) {
     m.update();
     if (player.collide(m)) {
       m.spliced = true;
-    }
-  }
-  for (let m in mobs1) {
-    if (mobs1[m].spliced) {
-      mobs1.splice(m, 1);
     }
   }
 }
@@ -193,6 +233,7 @@ function draw() {
   drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
   drawText('black', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
   drawText('black', "24px Helvetica", "left", "top", "mouseclick: " + mouseClickX + " " + mouseClickY, 0, 32);
+  // drawText('black', "24px Helvetica", "left", "top", "Timer:" + mouseClickX + " " + mouseClickY, 0, 32);
 
   for (let w of walls) {
     w.draw();
