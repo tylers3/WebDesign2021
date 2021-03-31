@@ -51,27 +51,7 @@ function mouseCollide(obj) {
   }
 }
 
-//**************** Initialize game function *****************
-
-function init() {
-  // create a new div element
-  canvasDiv = document.createElement("div");
-  canvasDiv.id = "chuck";
-  // and give it some content
-  canvas = document.createElement('canvas');
-  // add the text node to the newly created div
-  canvasDiv.appendChild(canvas);
-  // add the newly created element and its content into the DOM
-  const currentDiv = document.getElementById("div1");
-  document.body.insertBefore(canvasDiv, currentDiv);
-  canvas.width = WIDTH;
-  canvas.height = HEIGHT;
-  document.getElementById("chuck").style.width = canvas.width + 'px';
-  document.getElementById("chuck").style.height = canvas.height + 'px';
-  ctx = canvas.getContext('2d');
-  initialized = true;
-}
-
+// https://www.w3schools.com/howto/howto_js_countdown.asp and Mr. Cozort's timer.
 function countUp(end) {
   timerNow = Math.floor(Date.now() / 1000);
   currentTimer = timerNow - timerThen;
@@ -106,6 +86,27 @@ function timerDown() {
   };
 }
 
+//**************** Initialize game function *****************
+
+function init() {
+  // create a new div element
+  canvasDiv = document.createElement("div");
+  canvasDiv.id = "chuck";
+  // and give it some content
+  canvas = document.createElement('canvas');
+  // add the text node to the newly created div
+  canvasDiv.appendChild(canvas);
+  // add the newly created element and its content into the DOM
+  const currentDiv = document.getElementById("div1");
+  document.body.insertBefore(canvasDiv, currentDiv);
+  canvas.width = WIDTH;
+  canvas.height = HEIGHT;
+  document.getElementById("chuck").style.width = canvas.width + 'px';
+  document.getElementById("chuck").style.height = canvas.height + 'px';
+  ctx = canvas.getContext('2d');
+  initialized = true;
+}
+
 //************************ ALL GAME CLASSES *********
 class Sprite {
   constructor(w, h, x, y, c) {
@@ -115,6 +116,100 @@ class Sprite {
     this.y = y;
     this.color = c;
     this.spliced = false;
+  }
+  get cx() {
+    return this.x + this.w * 0.5;
+  }
+  get cy() {
+    return this.y + this.h * 0.5;
+  }
+  inbounds() {
+    if (this.x + this.w < WIDTH &&
+      this.x > 0 &&
+      this.y > 0 &&
+      this.y + this.h < HEIGHT) {
+      console.log('inbounds..');
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+class Player extends Sprite {
+  constructor(w, h, x, y, c, vx, vy) {
+    super(w, h, x, y, c);
+    this.vx = vx;
+    this.vy = vy;
+    this.speed = 3;
+    this.canjump = true;
+  }
+  //   moveinput() {
+  //     if ('w' in keysDown || 'W' in keysDown) { // Player control
+  //         this.dx = 0;
+  //         this.dy = -1;  
+  //         this.vx = 0;
+  //         this.vy = -this.speed;
+  //     } else if ('s' in keysDown || 'S' in keysDown) { // Player control
+  //         this.dx = 0;
+  //         this.dy = 1;  
+  //         this.vx = 0;
+  //         this.vy = this.speed;
+
+  //     } else if ('a' in keysDown || 'A' in keysDown) { // Player control
+  //         this.dx = -1;
+  //         this.dy = 0;
+  //         this.vy = 0;
+  //         this.vx = -this.speed;
+
+  //     } else if ('d' in keysDown || 'D' in keysDown) { // Player control
+  //         this.dx = 1;
+  //         this.dy = 0;
+  //         this.vy = 0;
+  //         this.vx = this.speed;
+  //     } else if ('e' in keysDown || 'E' in keysDown) { // Player control
+  //       this.w += 1;
+  //   }
+  //   else if ('p' in keysDown || 'P' in keysDown) { // Player control
+  //     paused = true;
+  // }
+  //     else if (' ' in keysDown && this.canjump) { // Player control
+  //       console.log(this.canjump);
+  //       this.vy -= 45;
+  //       this.canjump = false;
+
+  //   }
+  //     else{
+  //       // this.dx = 0;
+  //       // this.dy = 0;
+  //       this.vx = 0;
+  //       this.vy = 0;
+  //     }
+  // }
+  //   update(){
+  //     this.moveinput();
+  //     if (!this.inbounds()){
+  //       if (this.x <= 0) {
+  //         this.x = 0;
+  //       }
+  //       if (this.x + this.w >= WIDTH) {
+  //         this.x = WIDTH-this.w;
+  //       }
+  //       if (this.y+this.h >= HEIGHT) {
+  //         this.y = HEIGHT-this.h;
+  //         this.canjump = true;
+  //       }
+  //       // alert('out of bounds');
+  //       // console.log('out of bounds');
+  //     }
+
+  //     this.x += this.vx;
+  //     this.y += this.vy;
+  //   }
+  draw() {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.w, this.h);
+    ctx.strokeRect(this.x, this.y, this.w, this.h);
   }
 }
 
@@ -147,6 +242,7 @@ class Mob extends Sprite {
     ctx.strokeRect(this.x, this.y, this.w, this.h);
   }
 }
+
 class Wall extends Sprite {
   constructor(w, h, x, y, c) {
     super(w, h, x, y, c);
@@ -165,10 +261,10 @@ for (i = 0; i < 10; i++) {
 }
 
 // ####################### Callback #######################
-// gets mouse position when clicked
 addEventListener('mousemove', function (e) {
   mouseX = e.offsetX;
   mouseY = e.offsetY;
+  // we're gonna use this
   mousePos = {
     x: mouseX,
     y: mouseY
@@ -177,14 +273,46 @@ addEventListener('mousemove', function (e) {
 
 // gets mouse position when clicked
 addEventListener('mousedown', function (e) {
-  console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
-  mouseClickX = e.clientX;
-  mouseClickY = e.clientY;
+  // console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
+  mouseClickX = e.offsetX;
+  mouseClickY = e.offsetY;
   mouseClicks = {
     x: mouseClickX,
     y: mouseClickY
   };
 });
+
+// gets mouse position when clicked
+// addEventListener('mousemove', function (e) {
+//   mouseX = e.offsetX;
+//   mouseY = e.offsetY;
+//   mousePos = {
+//     x: mouseX,
+//     y: mouseY
+//   };
+// });
+
+// Mr. Cozort's code - Mouse Pos not working when used.
+// addEventListener('mousedown', function (e) {
+//   console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
+//   mouseClickX = e.clientX;
+//   mouseClickY = e.clientY;
+//   mouseClicks = {
+//     x: mouseClickX,
+//     y: mouseClickY
+//   };
+// });
+
+// // gets mouse position when clicked
+// addEventListener('mousedown', function (e) {
+//   console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
+//   mouseClickX = e.clientX;
+//   mouseClickY = e.clientY;
+//   mouseClicks = {
+//     x: mouseClickX,
+//     y: mouseClickY
+//   };
+// });
 
 addEventListener('mouseup', e => {
   mouseClickX = null;
@@ -201,6 +329,7 @@ function drawText(color, font, align, base, text, x, y) {
 }
 
 // ############### updates all elements on canvas ################
+// ********* THIS CODE REQUIRES THE SPECIFIC X Y OF THE SQUARE - area? ***********
 function update() {
   //updates all mobs in a group
   for (let m of mobs1) {
@@ -211,17 +340,56 @@ function update() {
       console.log("Spliced")
     }
   }
+  // for (let m of mobs1) {
+  //   m.update();
+  //   if (mouseClickX && mouseClickY == this.w && this.w){
+  //     SCORE++;
+  //     m.spliced = true;
+  //     console.log("Spliced")
+  //   }
+  // }
   for (let m of mobs1) {
     m.update();
     if (player.collide(m)) {
+      SCORE++;
       m.spliced = true;
     }
   }
   for (let m of mobs2) {
     m.update();
     if (player.collide(m)) {
+      SCORE++;
       m.spliced = true;
     }
+  }
+  for (let m2 of mobs2) {
+    for (let m1 of mobs1) {
+      if (m2.collide(m1)) {
+        m1.vx *= -1;
+        m1.vy *= -1;
+        m2.vx *= -1;
+        m2.vy *= -1;
+        m2.spliced = true;
+        SCORE++;
+      }
+    }
+  }
+  // splice stuff as needed
+  for (let m in mobs1) {
+    if (mobs1[m].spliced) {
+      SCORE++;
+      mobs1.splice(m, 1);
+    }
+  }
+  for (let m in mobs2) {
+    if (mobs2[m].spliced) {
+      SCORE++;
+      mobs1.splice(m, 1);
+    }
+  }
+  if (mobs1.length < 1) {
+    SCORE++;
+    spawnMob(30, mobs1);
   }
 }
 
