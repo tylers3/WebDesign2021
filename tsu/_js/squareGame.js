@@ -3,7 +3,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
 // Effects code from Mr. Cozort
 
-//##################### ALL GLOBALS AND UTILITY FUNCTIONS ###################
+// ################################### ALL GLOBAL AND UTILITY FUNCTIONS ###################################
 
 let canvasDiv;
 let canvas;
@@ -21,7 +21,6 @@ let mobs1 = [];
 let mobs2 = [];
 let mobs3 = [];
 let initialized = false;
-
 
 let mouseX = 0;
 let mouseY = 0;
@@ -69,12 +68,16 @@ function drawText(color, font, align, base, text, x, y) {
 }
 
 // ################################### TIMER ###################################
+// ********** MAKE GAME STOP AFTER A CERTAIN AMOUNT OF TIME **********
 
 // https://www.w3schools.com/howto/howto_js_countdown.asp
 // Mr. Cozort's timer.
 // https://stackoverflow.com/questions/1191865/code-for-a-simple-javascript-countdown-timer
+// https://www.codegrepper.com/code-examples/javascript/alert+delay+javascript
 
-setTimeout(function(){ alert("Times Up"); }, 60000);
+setTimeout(function () {
+  alert("TIMES UP - Refresh and try to beat your score!");
+}, 60000);
 
 function countUp(end) {
   timerNow = Math.floor(Date.now() / 1000);
@@ -82,9 +85,6 @@ function countUp(end) {
   if (currentTimer >= end) {
     return end;
   }
-  // if (timerDown == 10){
-  //   this.c="black"
-  // }
   return currentTimer;
 }
 
@@ -108,7 +108,7 @@ function timerDown() {
   };
 }
 
-//########################### Initialize game function #######################
+// ################################### INITIALIZE GAME FUNCTION ###################################
 function init() {
   // create a new div element
   canvasDiv = document.createElement("div");
@@ -128,7 +128,7 @@ function init() {
   initialized = true;
 }
 
-//############################ ALL GAME CLASSES #########################
+// ################################### ALL GAME CLASSES ###################################
 class Sprite {
   constructor(w, h, x, y, c) {
     this.w = w;
@@ -335,7 +335,7 @@ class Effect extends Sprite {
   }
 }
 
-// ###################### INSTANTIATE CLASSES ##########################
+// ################################### INSTANTIATE CLASSES ###################################
 let player = new Player(0, 0, WIDTH / 0, HEIGHT / 0, 'red', 0, 0);
 
 // adds two different sets of mobs to the mobs array
@@ -347,7 +347,8 @@ while (walls.length < 0) {
   walls.push(new Wall(200, 15, Math.floor(Math.random() * 500), Math.floor(Math.random() * 1000), 'purple'));
 }
 
-// ########################## USER INPUT ###############################
+// ################################### USER INPUT ###################################
+// ********** REMOVE SOMEHOW **********
 
 let keysDown = {};
 
@@ -390,7 +391,7 @@ addEventListener('mouseup', function () {
 
 let GAMETIME = null;
 
-// ###################### UPDATE ALL ELEMENTS ON CANVAS ################################
+// ################################### UPDATE ALL ELEMENTS ###################################
 function update() {
   player.update();
   GAMETIME = counter();
@@ -442,7 +443,7 @@ function update() {
   }
 }
 
-// ########## DRAW ALL ELEMENTS ON CANVAS ##########
+// ################################### DRAW ALL ELEMENTS ###################################
 function draw() {
   // clears the canvas before drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -470,7 +471,7 @@ let fps;
 let now;
 let then = performance.now();
 
-// ########## MAIN GAME LOOP ##########
+// ################################### MAIN GAME LOOP ###################################
 function main() {
   now = performance.now();
   delta = now - then;
