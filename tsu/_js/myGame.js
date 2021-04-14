@@ -1,13 +1,22 @@
+//sources
+// https://eloquentjavascript.net/code/chapter/17_canvas.js
+// https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
+
+//##################### ALL GLOBALS AND UTILITY FUNCTIONS ###################
+
 //initializing GLOBAL variables to create a canvas
 let canvasDiv;
 let canvas;
 let ctx;
 let WIDTH = 768;
 let HEIGHT = 768;
-let GRAVITY = 9.8;
 let SCORE = 0;
+let GRAVITY = 9.8;
 let paused = false;
 let timerThen = Math.floor(Date.now() / 1000);
+
+//effect for when mouse is clicked
+let effects = [];
 
 //walls
 let walls = [];
@@ -30,35 +39,50 @@ let mousePos = {
   y: 0
 };
 
-let mouseClicks = {
-  x: 0,
-  y: 0
+let mouseClick = {
+  x: null,
+  y: null
 };
 
-let mouseClickX = 0;
-let mouseClickY = 0;
 
-// Gametemplate
-function mouseCollide(obj) {
-  if (mouseClickX <= obj.x + obj.w &&
-    obj.x <= mouseClickX &&
-    mouseClickY <= obj.y + obj.h &&
-    obj.y <= mouseClickY
+function pointCollide(point, obj) {
+  if (point.x <= obj.x + obj.w &&
+    obj.x <= point.x &&
+    point.y <= obj.y + obj.h &&
+    obj.y <= point.y
   ) {
     return true;
-    // *************Check this*************
-    this.spliced = true;
   }
 }
 
-// https://www.w3schools.com/howto/howto_js_countdown.asp and Mr. Cozort's timer.
+function signum() {
+  let options = [-1, 1];
+  index = Math.floor(Math.random() * options.length);
+  result = options[index];
+  return result;
+}
+
+//mob spawner
+function spawnMob(x, arr, color) {
+  for (i = 0; i < x; i++) {
+    arr.push(new Mob(60, 60, 200, 100, color, Math.random() * 3 * signum(), Math.random() * 3 * signum()));
+  }
+}
+
+// draws text on canvas
+function drawText(color, font, align, base, text, x, y) {
+  ctx.fillStyle = color;
+  ctx.font = font;
+  ctx.textAlign = align;
+  ctx.textBaseline = base;
+  ctx.fillText(text, x, y);
+}
+
+//https://www.w3schools.com/howto/howto_js_countdown.asp and Mr. Cozort's timer.
 function countUp(end) {
   timerNow = Math.floor(Date.now() / 1000);
   currentTimer = timerNow - timerThen;
   if (currentTimer >= end) {
-    if (mobs2.length < 10) {
-      spawnMob(20, mobs2);
-    }
     return end;
   }
   return currentTimer;
@@ -70,10 +94,19 @@ function counter() {
   return currentTimer;
 }
 
+function timerUp(x, y) {
+  timerNow = Math.floor(Date.now() / 1000);
+  currentTimer = timerNow - timerThen;
+  if (currentTimer <= y && typeof (currentTimer + x) != "undefined") {
+    return currentTimer;
+  } else {
+    timerThen = timerNow;
+    return x;
+  }
+}
+
 function timerDown() {
   this.time = function (x, y) {
-    // this.timerThen = Math.floor(Date.now() / 1000);
-    // this.timerNow = Math.floor(Date.now() / 1000);
     this.timerThen = timerThen;
     this.timerNow = Math.floor(Date.now() / 1000);
     this.tick = this.timerNow - this.timerThen;
@@ -86,8 +119,7 @@ function timerDown() {
   };
 }
 
-//**************** Initialize game function *****************
-
+//########################### Initialize game function #######################
 function init() {
   // create a new div element
   canvasDiv = document.createElement("div");
@@ -107,13 +139,14 @@ function init() {
   initialized = true;
 }
 
-//************************ ALL GAME CLASSES *********
+//############################ ALL GAME CLASSES #########################
 class Sprite {
   constructor(w, h, x, y, c) {
     this.w = w;
     this.h = h;
     this.x = x;
     this.y = y;
+    // *************** Make it so that only mobs are red and sprite is another *************
     this.color = c;
     this.spliced = false;
   }
@@ -134,6 +167,51 @@ class Sprite {
       return false;
     }
   }
+  //source for collision: https://pothonprogramming.github.io/
+  collideRectangle(rect) {
+
+    var dx = rect.cx - this.cx; // x difference between centers
+    var dy = rect.cy - this.cy; // y difference between centers
+    var aw = (rect.w + this.w) * 0.5; // average width
+    var ah = (rect.h + this.h) * 0.5; // average height
+
+    /* If either distance is greater than the average dimension there is no collision. */
+    if (Math.abs(dx) > aw || Math.abs(dy) > ah) return false;
+
+    /* To determine which region of this rectangle the rect's center
+    point is in, we have to account for the scale of the this rectangle.
+    To do that, we divide dx and dy by it's width and height respectively. */
+    if (Math.abs(dx / this.w) > Math.abs(dy / this.h)) {
+
+
+      if (dx < 0) {
+        rect.x = this.x - rect.w;
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, WIDTH / 0, HEIGHT / 0);
+        ctx.strokeRect(0, 0, WIDTH / 0, HEIGHT / 0);
+      } // left
+      else rect.x = this.x + this.w; // right
+
+
+    } else {
+
+      if (dy < 0) rect.y = this.y - rect.h; // top
+      else rect.y = this.y + this.h; // bottom
+
+    }
+
+    return true;
+
+  }
+  collide(obj) {
+    if (this.x <= obj.x + obj.w &&
+      obj.x <= this.x + this.w &&
+      this.y <= obj.y + obj.h &&
+      obj.y <= this.y + this.h
+    ) {
+      return true;
+    }
+  }
 }
 
 class Player extends Sprite {
@@ -144,68 +222,63 @@ class Player extends Sprite {
     this.speed = 3;
     this.canjump = true;
   }
-  //   moveinput() {
-  //     if ('w' in keysDown || 'W' in keysDown) { // Player control
-  //         this.dx = 0;
-  //         this.dy = -1;  
-  //         this.vx = 0;
-  //         this.vy = -this.speed;
-  //     } else if ('s' in keysDown || 'S' in keysDown) { // Player control
-  //         this.dx = 0;
-  //         this.dy = 1;  
-  //         this.vx = 0;
-  //         this.vy = this.speed;
+  moveinput() {
+    if ('w' in keysDown || 'W' in keysDown) { // Player control
+      this.dx = 0;
+      this.dy = -1;
+      // this.vx = 0;
+      this.vy = -this.speed;
+    } else if ('s' in keysDown || 'S' in keysDown) { // Player control
+      this.dx = 0;
+      this.dy = 1;
+      // this.vx = 0;
+      this.vy = this.speed;
 
-  //     } else if ('a' in keysDown || 'A' in keysDown) { // Player control
-  //         this.dx = -1;
-  //         this.dy = 0;
-  //         this.vy = 0;
-  //         this.vx = -this.speed;
+    } else if ('a' in keysDown || 'A' in keysDown) { // Player control
+      this.dx = -1;
+      this.dy = 0;
+      // this.vy = 0;
+      this.vx = -this.speed;
 
-  //     } else if ('d' in keysDown || 'D' in keysDown) { // Player control
-  //         this.dx = 1;
-  //         this.dy = 0;
-  //         this.vy = 0;
-  //         this.vx = this.speed;
-  //     } else if ('e' in keysDown || 'E' in keysDown) { // Player control
-  //       this.w += 1;
-  //   }
-  //   else if ('p' in keysDown || 'P' in keysDown) { // Player control
-  //     paused = true;
-  // }
-  //     else if (' ' in keysDown && this.canjump) { // Player control
-  //       console.log(this.canjump);
-  //       this.vy -= 45;
-  //       this.canjump = false;
+    } else if ('d' in keysDown || 'D' in keysDown) { // Player control
+      this.dx = 1;
+      this.dy = 0;
+      // this.vy = 0;
+      this.vx = this.speed;
+    } else if ('e' in keysDown || 'E' in keysDown) { // Player control
+      this.w += 1;
+    } else if ('p' in keysDown || 'P' in keysDown) { // Player control
+      paused = true;
+    } else if (' ' in keysDown && this.canjump) { // Player control
+      console.log(this.canjump);
+      this.vy -= 45;
+      this.canjump = false;
 
-  //   }
-  //     else{
-  //       // this.dx = 0;
-  //       // this.dy = 0;
-  //       this.vx = 0;
-  //       this.vy = 0;
-  //     }
-  // }
-  //   update(){
-  //     this.moveinput();
-  //     if (!this.inbounds()){
-  //       if (this.x <= 0) {
-  //         this.x = 0;
-  //       }
-  //       if (this.x + this.w >= WIDTH) {
-  //         this.x = WIDTH-this.w;
-  //       }
-  //       if (this.y+this.h >= HEIGHT) {
-  //         this.y = HEIGHT-this.h;
-  //         this.canjump = true;
-  //       }
-  //       // alert('out of bounds');
-  //       // console.log('out of bounds');
-  //     }
+    } else {
+      // this.dx = 0;
+      // this.dy = 0;
+      this.vx = 0;
+      this.vy = GRAVITY;
+    }
+  }
+  update() {
+    this.moveinput();
+    if (!this.inbounds()) {
+      if (this.x <= 0) {
+        this.x = 0;
+      }
+      if (this.x + this.w >= WIDTH) {
+        this.x = WIDTH - this.w;
+      }
+      if (this.y + this.h >= HEIGHT) {
+        this.y = HEIGHT - this.h;
+        this.canjump = true;
+      }
+    }
 
-  //     this.x += this.vx;
-  //     this.y += this.vy;
-  //   }
+    this.x += this.vx;
+    this.y += this.vy;
+  }
   draw() {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.w, this.h);
@@ -231,9 +304,9 @@ class Mob extends Sprite {
         this.vy *= -1;
       }
     }
-    // This: any object that is passed as a parameter. 
-    if (mouseCollide(this)) {
-      this.spliced = true
+    if (pointCollide(mouseClick, this)) {
+      this.spliced = true;
+      SCORE++;
     }
   }
   draw() {
@@ -255,15 +328,54 @@ class Wall extends Sprite {
   }
 }
 
-// adds two different sets of mobs to the mobs array
-for (i = 0; i < 10; i++) {
-  mobs1.push(new Mob(60, 60, 200, 100, 'pink', Math.random() * -2, Math.random() * -2));
+class Effect extends Sprite {
+  constructor(w, h, x, y, c) {
+    super(w, h, x, y, c);
+    this.type = "normal";
+  }
+  draw() {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.w, this.h);
+    ctx.strokeRect(this.x, this.y, this.w, this.h);
+  }
+  update() {
+    this.w += 2;
+    this.h += 2;
+    this.x -= 1;
+    this.y -= 1;
+    setTimeout(() => this.spliced = true, 250)
+  }
 }
 
-// ####################### Callback #######################
+// ###################### INSTANTIATE CLASSES ##########################
+let player = new Player(25, 25, WIDTH / 2, HEIGHT / 2, 'red', 0, 0);
+
+// adds two different sets of mobs to the mobs array
+spawnMob(20, mobs1, 'red');
+spawnMob(20, mobs2, 'blue');
+
+
+while (walls.length < 0) {
+  walls.push(new Wall(200, 15, Math.floor(Math.random() * 500), Math.floor(Math.random() * 1000), 'purple'));
+}
+
+// ########################## USER INPUT ###############################
+
+let keysDown = {};
+
+addEventListener("keydown", function (e) {
+  keysDown[e.key] = true;
+}, false);
+
+addEventListener("keyup", function (e) {
+  delete keysDown[e.key];
+}, false);
+
+// gets mouse position when clicked
 addEventListener('mousemove', function (e) {
   mouseX = e.offsetX;
   mouseY = e.offsetY;
+
   // we're gonna use this
   mousePos = {
     x: mouseX,
@@ -274,80 +386,41 @@ addEventListener('mousemove', function (e) {
 // gets mouse position when clicked
 addEventListener('mousedown', function (e) {
   // console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
-  mouseClickX = e.offsetX;
-  mouseClickY = e.offsetY;
-  mouseClicks = {
-    x: mouseClickX,
-    y: mouseClickY
-  };
+  mouseClick.x = e.offsetX;
+  mouseClick.y = e.offsetY;
+  // effects.push(new Effect(15, 15, mouseClick.x - 7, mouseClick.y - 7, 'green'))
 });
 
-// gets mouse position when clicked
-// addEventListener('mousemove', function (e) {
-//   mouseX = e.offsetX;
-//   mouseY = e.offsetY;
-//   mousePos = {
-//     x: mouseX,
-//     y: mouseY
-//   };
-// });
+addEventListener('mouseup', function () {
+  setTimeout(() => {
+      mouseClick.x = null;
+      mouseClick.y = null;
+    },
+    1000
+  )
 
-// Mr. Cozort's code - Mouse Pos not working when used.
-// addEventListener('mousedown', function (e) {
-//   console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
-//   mouseClickX = e.clientX;
-//   mouseClickY = e.clientY;
-//   mouseClicks = {
-//     x: mouseClickX,
-//     y: mouseClickY
-//   };
-// });
+});
 
-// // gets mouse position when clicked
-// addEventListener('mousedown', function (e) {
-//   console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
-//   mouseClickX = e.clientX;
-//   mouseClickY = e.clientY;
-//   mouseClicks = {
-//     x: mouseClickX,
-//     y: mouseClickY
-//   };
-// });
-
-addEventListener('mouseup', e => {
-  mouseClickX = null;
-  mouseClickY = null;
-})
-
-// draws text on canvas
-function drawText(color, font, align, base, text, x, y) {
-  ctx.fillStyle = color;
-  ctx.font = font;
-  ctx.textAlign = align;
-  ctx.textBaseline = base;
-  ctx.fillText(text, x, y);
-}
-
-// ############### updates all elements on canvas ################
-// ********* THIS CODE REQUIRES THE SPECIFIC X Y OF THE SQUARE - area? ***********
+let GAMETIME = null;
+// ###################### UPDATE ALL ELEMENTS ON CANVAS ################################
 function update() {
-  //updates all mobs in a group
-  for (let m of mobs1) {
-    m.update();
-    if (mouseClickX && mouseClickY == this.x && this.y) {
-      SCORE++;
-      m.spliced = true;
-      console.log("Spliced")
+  player.update();
+  for (e of effects) {
+    e.update();
+  }
+  for (e in effects) {
+    if (effects[e].spliced) {
+      effects.splice(e, 1);
     }
   }
-  // for (let m of mobs1) {
-  //   m.update();
-  //   if (mouseClickX && mouseClickY == this.w && this.w){
-  //     SCORE++;
-  //     m.spliced = true;
-  //     console.log("Spliced")
-  //   }
-  // }
+  GAMETIME = counter();
+  for (let w of walls) {
+    // m.update();
+    // if (player.collide(m)) {
+    //   SCORE++;
+    //   m.spliced = true;
+    // }
+  }
   for (let m of mobs1) {
     m.update();
     if (player.collide(m)) {
@@ -358,50 +431,46 @@ function update() {
   for (let m of mobs2) {
     m.update();
     if (player.collide(m)) {
-      SCORE++;
       m.spliced = true;
     }
   }
   for (let m2 of mobs2) {
     for (let m1 of mobs1) {
       if (m2.collide(m1)) {
-        m1.vx *= -1;
-        m1.vy *= -1;
-        m2.vx *= -1;
-        m2.vy *= -1;
-        m2.spliced = true;
-        SCORE++;
+        m1.vx *= 1;
+        m1.vy *= 1;
+        m2.vx *= 1;
+        m2.vy *= 1;
       }
     }
   }
   // splice stuff as needed
   for (let m in mobs1) {
     if (mobs1[m].spliced) {
-      SCORE++;
       mobs1.splice(m, 1);
     }
   }
   for (let m in mobs2) {
     if (mobs2[m].spliced) {
-      SCORE++;
-      mobs1.splice(m, 1);
+      mobs2.splice(m, 1);
     }
   }
   if (mobs1.length < 1) {
-    SCORE++;
     spawnMob(30, mobs1);
   }
 }
 
-// draws all the stuff on the canvas that you want to draw
+// ########## DRAW ALL ELEMENTS ON CANVAS ##########
 function draw() {
   // clears the canvas before drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawText('black', "24px Helvetica", "left", "top", "Points: " + SCORE, 600, 0);
+  drawText('black', "24px Helvetica", "left", "top", "Timer: " + GAMETIME, 400, 32);
+  drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
   drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
+  // drawText('black', "24px Helvetica", "left", "top", "Delta: " + gDelta, 400, 32);
   drawText('black', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
-  drawText('black', "24px Helvetica", "left", "top", "mouseclick: " + mouseClickX + " " + mouseClickY, 0, 32);
-  // drawText('black', "24px Helvetica", "left", "top", "Timer:" + mouseClickX + " " + mouseClickY, 0, 32);
+  drawText('black', "24px Helvetica", "left", "top", "mouseclick: " + mouseClick.x + " " + mouseClick.y, 0, 32);
+  player.draw();
 
   for (let w of walls) {
     w.draw();
@@ -412,48 +481,28 @@ function draw() {
   for (let m of mobs2) {
     m.draw();
   }
+  for (let e of effects) {
+    e.draw();
+  }
 }
-
-// // Timer
-// // https://www.w3schools.com/howto/howto_js_countdown.asp
-// // Set the date we're counting down to
-// var countDownDate = new Date("Jan 5, 2022 15:37:25").getTime();
-
-// // Update the count down every 1 second
-// var x = setInterval(function() {
-
-//   // Get today's date and time
-//   var now = new Date().getTime();
-
-//   // Find the distance between now and the count down date
-//   var distance = countDownDate - now;
-
-//   // Time calculations for days, hours, minutes and seconds
-//   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-//   // If the count down is finished, write some text
-//   if (distance < 0) {
-//     clearInterval(x);
-//     document.getElementById("demo").innerHTML = "EXPIRED";
-//   }
-// }, 1000);
 
 // set variables necessary for game loop
 let fps;
 let now;
 let delta;
+let gDelta;
 let then = performance.now();
 
-//main game loop
+// ########## MAIN GAME LOOP ##########
 function main() {
   now = performance.now();
   delta = now - then;
   gDelta = (Math.min(delta, 17));
   fps = Math.ceil(1000 / gDelta);
   if (initialized) {
-    // if (!paused) {
-    //   update(gDelta);
-    // }
+    if (!paused) {
+      update(gDelta);
+    }
     draw();
   }
   then = now;
