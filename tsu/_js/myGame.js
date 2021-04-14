@@ -1,39 +1,30 @@
 //sources
 // https://eloquentjavascript.net/code/chapter/17_canvas.js
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
+// Effects code from Mr. Cozort
 
 //##################### ALL GLOBALS AND UTILITY FUNCTIONS ###################
 
-//initializing GLOBAL variables to create a canvas
 let canvasDiv;
 let canvas;
 let ctx;
-let WIDTH = 768;
-let HEIGHT = 768;
+let WIDTH = 1440;
+let HEIGHT = 720;
 let SCORE = 0;
 let GRAVITY = 9.8;
 let paused = false;
 let timerThen = Math.floor(Date.now() / 1000);
 
-//effect for when mouse is clicked
-let effects = [];
-
-//walls
+//walls, array for mobs/enemies
 let walls = [];
-
-//array for mobs/enemies
 let mobs1 = [];
 let mobs2 = [];
 let mobs3 = [];
-
-// lets us know if game is initialized
 let initialized = false;
 
-// setup mouse position variables
+
 let mouseX = 0;
 let mouseY = 0;
-
-// object setting mousePos
 let mousePos = {
   x: 0,
   y: 0
@@ -43,7 +34,6 @@ let mouseClick = {
   x: null,
   y: null
 };
-
 
 function pointCollide(point, obj) {
   if (point.x <= obj.x + obj.w &&
@@ -78,13 +68,23 @@ function drawText(color, font, align, base, text, x, y) {
   ctx.fillText(text, x, y);
 }
 
-//https://www.w3schools.com/howto/howto_js_countdown.asp and Mr. Cozort's timer.
+// ################################### TIMER ###################################
+
+// https://www.w3schools.com/howto/howto_js_countdown.asp
+// Mr. Cozort's timer.
+// https://stackoverflow.com/questions/1191865/code-for-a-simple-javascript-countdown-timer
+
+setTimeout(function(){ alert("Times Up"); }, 60000);
+
 function countUp(end) {
   timerNow = Math.floor(Date.now() / 1000);
   currentTimer = timerNow - timerThen;
   if (currentTimer >= end) {
     return end;
   }
+  // if (timerDown == 10){
+  //   this.c="black"
+  // }
   return currentTimer;
 }
 
@@ -92,17 +92,6 @@ function counter() {
   timerNow = Math.floor(Date.now() / 1000);
   currentTimer = timerNow - timerThen;
   return currentTimer;
-}
-
-function timerUp(x, y) {
-  timerNow = Math.floor(Date.now() / 1000);
-  currentTimer = timerNow - timerThen;
-  if (currentTimer <= y && typeof (currentTimer + x) != "undefined") {
-    return currentTimer;
-  } else {
-    timerThen = timerNow;
-    return x;
-  }
 }
 
 function timerDown() {
@@ -161,7 +150,6 @@ class Sprite {
       this.x > 0 &&
       this.y > 0 &&
       this.y + this.h < HEIGHT) {
-      console.log('inbounds..');
       return true;
     } else {
       return false;
@@ -220,7 +208,7 @@ class Player extends Sprite {
     this.vx = vx;
     this.vy = vy;
     this.speed = 3;
-    this.canjump = true;
+    this.canjump = false;
   }
   moveinput() {
     if ('w' in keysDown || 'W' in keysDown) { // Player control
@@ -348,11 +336,11 @@ class Effect extends Sprite {
 }
 
 // ###################### INSTANTIATE CLASSES ##########################
-let player = new Player(25, 25, WIDTH / 2, HEIGHT / 2, 'red', 0, 0);
+let player = new Player(0, 0, WIDTH / 0, HEIGHT / 0, 'red', 0, 0);
 
 // adds two different sets of mobs to the mobs array
-spawnMob(20, mobs1, 'red');
-spawnMob(20, mobs2, 'blue');
+spawnMob(20, mobs1, 'pink');
+spawnMob(20, mobs2, 'cyan');
 
 
 while (walls.length < 0) {
@@ -388,7 +376,6 @@ addEventListener('mousedown', function (e) {
   // console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
   mouseClick.x = e.offsetX;
   mouseClick.y = e.offsetY;
-  // effects.push(new Effect(15, 15, mouseClick.x - 7, mouseClick.y - 7, 'green'))
 });
 
 addEventListener('mouseup', function () {
@@ -402,25 +389,13 @@ addEventListener('mouseup', function () {
 });
 
 let GAMETIME = null;
+
 // ###################### UPDATE ALL ELEMENTS ON CANVAS ################################
 function update() {
   player.update();
-  for (e of effects) {
-    e.update();
-  }
-  for (e in effects) {
-    if (effects[e].spliced) {
-      effects.splice(e, 1);
-    }
-  }
   GAMETIME = counter();
-  for (let w of walls) {
-    // m.update();
-    // if (player.collide(m)) {
-    //   SCORE++;
-    //   m.spliced = true;
-    // }
-  }
+  for (let w of walls) {}
+  // m of mobs - for any mob...
   for (let m of mobs1) {
     m.update();
     if (player.collide(m)) {
@@ -458,6 +433,13 @@ function update() {
   if (mobs1.length < 1) {
     spawnMob(30, mobs1);
   }
+  // Attempting to make a change at a certain time. 
+  if (timerDown == 10) {
+    this.color = "orange"
+  }
+  if (counter == 10) {
+    this.color = "orange"
+  }
 }
 
 // ########## DRAW ALL ELEMENTS ON CANVAS ##########
@@ -465,9 +447,9 @@ function draw() {
   // clears the canvas before drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawText('black', "24px Helvetica", "left", "top", "Timer: " + GAMETIME, 400, 32);
-  drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
+  drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 1000, 0);
   drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
-  // drawText('black', "24px Helvetica", "left", "top", "Delta: " + gDelta, 400, 32);
+  drawText('black', "24px Helvetica", "left", "top", "Click all the squares before 60 seconds", 600, 32);
   drawText('black', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
   drawText('black', "24px Helvetica", "left", "top", "mouseclick: " + mouseClick.x + " " + mouseClick.y, 0, 32);
   player.draw();
@@ -481,16 +463,11 @@ function draw() {
   for (let m of mobs2) {
     m.draw();
   }
-  for (let e of effects) {
-    e.draw();
-  }
 }
 
 // set variables necessary for game loop
 let fps;
 let now;
-let delta;
-let gDelta;
 let then = performance.now();
 
 // ########## MAIN GAME LOOP ##########
