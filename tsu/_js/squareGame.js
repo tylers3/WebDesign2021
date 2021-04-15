@@ -76,7 +76,7 @@ function drawText(color, font, align, base, text, x, y) {
 // https://www.codegrepper.com/code-examples/javascript/alert+delay+javascript
 
 setTimeout(function () {
-  alert("TIMES UP - Refresh your browser and try to beat your score!");
+  alert("TIMES UP! Your score is " + SCORE + "- Refresh your browser and try to beat your score!");
 }, 30000);
 
 function countUp(end) {
@@ -448,7 +448,7 @@ function draw() {
   // clears the canvas before drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawText('black', "24px Helvetica", "left", "top", "Timer: " + GAMETIME, 400, 32);
-  drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 1000, 0);
+  drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
   drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
   drawText('black', "24px Helvetica", "left", "top", "Click all the squares before 30 seconds", 600, 32);
   drawText('black', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
