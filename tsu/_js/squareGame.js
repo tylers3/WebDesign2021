@@ -76,8 +76,8 @@ function drawText(color, font, align, base, text, x, y) {
 // https://www.codegrepper.com/code-examples/javascript/alert+delay+javascript
 
 setTimeout(function () {
-  alert("TIMES UP! Your score is " + SCORE + "- Refresh your browser and try to beat your score!");
-}, 30000);
+  alert("TIMES UP! Your score is " + SCORE + " - Press 'OK' to try again!");
+  window.location.reload();  }, 30000);
 
 function countUp(end) {
   timerNow = Math.floor(Date.now() / 1000);
