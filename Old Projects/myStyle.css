@@ -1,0 +1,32 @@
+/* This is an ID */
+#canvas {
+    border:1px solid #000000;
+}
+.container {
+    margin: 0 auto;
+    width: 2000px;
+    height: 3000px;
+  }
+
+  .blueblock {
+    position: absolute;
+    /* float:left; */
+    height: 500px;
+    width: 700px;
+    background-color: #3C3B6E
+  }
+
+  .redstripe {
+    /* float: right; */
+    height: 71.5px;
+    width: 2000px;
+    background-color: #B22234
+  }
+
+  .whitestripe {
+    /* float: right; */
+    height: 71.5px;
+    width: 2000px;
+
+    background-color: #FFFFFF
+  }
