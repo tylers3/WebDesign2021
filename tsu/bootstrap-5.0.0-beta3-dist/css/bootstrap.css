@@ -5713,7 +5713,7 @@ textarea.form-control-lg {
 }
 
 .carousel {
-  position: relative;
+  position: absolute;
 }
 
 .carousel.pointer-event {
