@@ -1,9 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+@font-face {
+    font-family: 'robotoregular';
+    src: url('roboto-regular-webfont.woff2') format('woff2'),
+        url('roboto-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'robotoblack';
+    src: url('roboto-black-webfont.woff2') format('woff2'),
+        url('roboto-black-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
 
 .slideshow-item {
-    height: 100vh;
     width: 100%;
-    background-color: #58555A;
     position: relative;
 }
 
@@ -12,20 +26,25 @@
     padding: 50px;
 }
 
-.background {
-    background-color: black;
+body {
+    background-color: rgba(33, 37, 41, 1.00) !important;
 }
 
-.navbar-brand {
-    text-align: right;
-    font-family: "roboto";
+p {
+    padding-top: 2%;
+    padding-left: 2%;
+    padding-right: 2%;
+    color: white;
 }
 
-.navbar{
-    z-index:9; 
-   }
-   #slideshow{
-     position:absolute;
-     width:100%;
-     top:0;
-   }
+.profile {
+    position: relative;
+    left: 40%;
+    width: 10%;
+    height: 40%;
+}
+
+.aboutMe {
+    position: relative;
+    right: 40%;
+}

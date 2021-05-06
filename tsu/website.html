@@ -1,3 +1,10 @@
+<!-- Sources -->
+<!-- https://getbootstrap.com/docs/5.0/components/navbar/ -->
+<!-- https://getbootstrap.com/docs/5.0/components/carousel/ -->
+<!-- https://stackoverflow.com/questions/10768891/how-to-change-the-default-background-color-white-to-something-else-in-twitter-bo -->
+<!-- https://www.pagecloud.com/blog/how-to-add-custom-fonts-to-any-website, https://www.fontsquirrel.com/tools/webfont-generator -->
+<!-- Relative link -->
+
 <!doctype html>
 <html lang="en">
 
@@ -6,94 +13,104 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <script src="bootstrap-5.0.0-beta3-dist/js/bootstrap.js"></script>
-    <link rel="stylesheet" type="text/css" href="bootstrap-5.0.0-beta3-dist/css/bootstrap.css">
-  
+  <script src="_js/website.js"></script>
+  <link rel="stylesheet" type="text/css" href="bootstrap-5.0.0-beta3-dist/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="_CSS/website.css">
+
   <title>Tyler Su</title>
 </head>
 
 <body>
 
-<div class="background"></div>
+  <div class="background"></div>
 
-<!-- ######################################## NAVBAR ######################################## -->
-<!-- https://getbootstrap.com/docs/5.0/components/navbar/ -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+  <!-- ######################################## NAVBAR ######################################## -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Photography
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="_photography/Travel/travel.html">Travel</a></li>
+              <li><a class="dropdown-item" href="_photography/Plane Spotting/planeSpotting.html">Plane Spotting</a></li>
+              <li><a class="dropdown-item" href="_photography/Sports/sports.html">Sports</a></li>
+              <li><a class="dropdown-item" href="_photography/Portaits/portaits.html">Portraits</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="_photography/Overview/overview.html">Overview</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown 2">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Graphic Design
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="_graphicDesign/Logos/logos.html">Logos</a></li>
+              <li><a class="dropdown-item" href="_graphicDesign/Bellarmine Football/bcpFootball.html">BCP Football
+                  Graphics</a></li>
+              <li><a class="dropdown-item" href="#">Vector Illustrations</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="#">Overview</a></li>
+            </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About Me</a>
+          </li>
+          </li>
+        </ul>
+      </div>
+      <a class="navbar-brand" href="#">TYLER SU</a>
+    </div>
+  </nav>
+
+  <!-- ######################################## SLIDESHOW ######################################## -->
+  <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active" data-bs-interval="5000">
+        <img src="_photography/Travel/cOVER.jpg" class="d-block w-100">
+      </div>
+      <div class="carousel-item" data-bs-interval="5000">
+        <img src="_graphicDesign/Bellarmine Football/vsStFrancis1.4.jpg" class="d-block w-100">
+      </div>
+      <div class="carousel-item" data-bs-interval="5000">
+        <img src="_photography/Plane Spotting/SFO (46).jpg" class="d-block w-100">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Photography
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Travel</a></li>
-            <li><a class="dropdown-item" href="#">Plane Spotting</a></li>
-            <li><a class="dropdown-item" href="#">Sports</a></li>
-            <li><a class="dropdown-item" href="#">Portraits</a></li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li><a class="dropdown-item" href="#">Overview</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown 2">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Graphic Design
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Logos</a></li>
-            <li><a class="dropdown-item" href="#">Football Graphics</a></li>
-            <li><a class="dropdown-item" href="#">Vector Illustrations</a></li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li><a class="dropdown-item" href="#">Overview</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <a class="navbar-brand" href="#">TYLER SU</a>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
   </div>
-</nav>
 
-<!-- ######################################## SLIDESHOW ######################################## -->
-<!-- https://getbootstrap.com/docs/5.0/components/carousel/ -->
-
-<div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
-  <div class="carousel-inner">
-    <div class="carousel-item active" data-bs-interval="5000">
-      <img src="_photography/Travel/ByTylerSu (2 of 4).jpg" class="d-block w-100">
-    </div>
-    <div class="carousel-item" data-bs-interval="5000">
-      <img src="_graphicDesign/Bellarmine Football/Cover.jpg" class="d-block w-100">
-    </div>
-    <div class="carousel-item" data-bs-interval="5000">
-      <img src="_photography/Plane Spotting/SFO/SFO Cover.jpg" class="d-block w-100">
-    </div>
+  <!-- ######################################## ABOUT ME ######################################## -->
+  <div id="aboutMe">
+    <img src="Profile.jpg" class="profile">
+    <p>Hello, I'm Tyler. Currently living in San Jose, California. I'm a photographer and graphic designer.
+      My primary</p>
   </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
 
-<!-- ######################################## ABOUT ME ######################################## -->
-<div id="ABOUT ME">
-  <h1>TEST TEST TEST</h1>
-</div>
+  <!-- ######################################## Works ######################################## -->
+  <div id="works">
+
+  </div>
 
 </body>
 

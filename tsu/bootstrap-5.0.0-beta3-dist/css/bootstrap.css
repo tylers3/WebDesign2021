@@ -46,9 +46,10 @@
 
 body {
   margin: 0;
-  font-family: var(--bs-font-sans-serif);
+  font-family: 'roboto';
   font-size: 1rem;
-  font-weight: 400;
+  font-size: large;
+  font-weight: 500;
   line-height: 1.5;
   color: #212529;
   background-color: #fff;
@@ -5713,7 +5714,7 @@ textarea.form-control-lg {
 }
 
 .carousel {
-  position: absolute;
+  position: relative;
 }
 
 .carousel.pointer-event {
