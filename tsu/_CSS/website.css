@@ -37,14 +37,12 @@ p {
     color: white;
 }
 
-.profile {
-    position: relative;
-    left: 40%;
-    width: 10%;
-    height: 40%;
-}
-
-.aboutMe {
-    position: relative;
-    right: 40%;
-}
+.row {
+    display: flex;
+  }
+  
+  .column {
+    padding-top: 2%;
+    flex: 50%;
+    text-align: center;
+  }
